@@ -7,5 +7,5 @@ module.exports = defineConfig({
       entry: 'src/index.ts',
     },
   },
-  publicPath: process.env.NODE_ENV === "production" ? "/kajitomg/vue-test-task-for-medods-form/" : "/",
+  publicPath: process.env.NODE_ENV === 'production' ? '/vue-test-task-for-medods-form/' : '/',
 });

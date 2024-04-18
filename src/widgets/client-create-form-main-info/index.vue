@@ -147,67 +147,79 @@ export default defineComponent({
 <template>
   <form-layout class="form" title="Создание клиента">
     <form class="form__content" :disabled="!formValid" @submit.prevent="onSubmit">
-      <div class="form__content__fcs">
-        <form-field label="Фамилия" class="field">
-          <text-field
-              label="firstname"
-              v-model.trim="form.firstname.value"
-              placeholder="Иванов"
-              full-width
-              :invalid="v$.form.firstname.$invalid"
-              :form-blured="blured"
-              v-on:focused="(val) => onFocused('firstname')(val)"
-              required
-          ></text-field>
-        </form-field>
-        <form-field label="Имя" class="field">
-          <text-field
-              label="lastname"
-              v-model.trim="form.lastname.value"
-              placeholder="Иван"
-              full-width
-              :invalid="v$.form.lastname.$invalid"
-              :form-blured="blured"
-              v-on:focused="(val) => onFocused('lastname')(val)"
-              required
-          ></text-field>
-        </form-field>
-        <form-field label="Отчество" class="field field__patronymic">
-          <text-field
-              label="patronymic"
-              v-model.trim="form.patronymic.value"
-              placeholder="Иванович"
-              :invalid="v$.form.patronymic.$invalid"
-              :form-blured="blured"
-              v-on:focused="(val) => onFocused('patronymic')(val)"
-              full-width
-          ></text-field>
-        </form-field>
-      </div>
-      <form-field
-          label="Номер телефона"
-          class="field"
-          :invalid="v$.form.phonenumber.$invalid"
-          :helper-text="
+      <div class="form__content__first">
+        <div class="form__content__fc">
+          <form-field
+              label="Фамилия"
+              class="field field__lastname"
+          >
+            <text-field
+                label="firstname field__lastname"
+                v-model.trim="form.lastname.value"
+                placeholder="Иванов"
+                full-width
+                :invalid="v$.form.lastname.$invalid"
+                :form-blured="blured"
+                v-on:focused="(val) => onFocused('lastname')(val)"
+                required
+            ></text-field>
+          </form-field>
+          <form-field
+              label="Имя"
+              class="field field__firstname"
+          >
+            <text-field
+                label="firstname"
+                v-model.trim="form.firstname.value"
+                placeholder="Иван"
+                full-width
+                :invalid="v$.form.firstname.$invalid"
+                :form-blured="blured"
+                v-on:focused="(val) => onFocused('firstname')(val)"
+                required
+            ></text-field>
+          </form-field>
+          <form-field
+              label="Отчество"
+              class="field field__patronymic"
+          >
+            <text-field
+                label="patronymic"
+                v-model.trim="form.patronymic.value"
+                placeholder="Иванович"
+                :invalid="v$.form.patronymic.$invalid"
+                :form-blured="blured"
+                v-on:focused="(val) => onFocused('patronymic')(val)"
+                full-width
+            ></text-field>
+          </form-field>
+        </div>
+        <form-field
+            label="Номер телефона"
+            class="field field__phonenumber"
+            :invalid="v$.form.phonenumber.$invalid"
+            :helper-text="
           form.phonenumber.focused &&
           v$.form.phonenumber.$invalid &&
           form.phonenumber.value &&
           blured ? 'Неверный формат номера' : ''
         "
-      >
-        <text-field
-            label="phonenumber"
-            v-model.trim="form.phonenumber.value"
-            placeholder="79999999999"
-            :invalid="v$.form.phonenumber.$invalid"
-            :form-blured="blured"
-            v-on:focused="(val) => onFocused('phonenumber')(val)"
-            required
-        ></text-field>
-      </form-field>
+        >
+          <text-field
+              label="phonenumber"
+              v-model.trim="form.phonenumber.value"
+              placeholder="79999999999"
+              :invalid="v$.form.phonenumber.$invalid"
+              :form-blured="blured"
+              full-width
+              v-on:focused="(val) => onFocused('phonenumber')(val)"
+              required
+          ></text-field>
+        </form-field>
+      </div>
       <form-field
           label="Пол"
-          class="field"
+          class="field field__sex"
       >
         <styled-select
             label="sex"
@@ -222,43 +234,45 @@ export default defineComponent({
           <option>Женский</option>
         </styled-select>
       </form-field>
-      <form-field
-          label="Группа клиентов"
-          class="field"
-      >
-        <styled-select
-            label="clients"
-            multiple
-            required
-            v-model="form.clients.value"
-            :value="form.clients.value"
-            :invalid="v$.form.clients.$invalid"
-            :form-blured="blured"
-            v-on:focused="(val) => onFocused('clients')(val)"
+      <div class="form__content__second">
+        <form-field
+            label="Группа клиентов"
+            class="field field__clients"
         >
-          <option>VIP</option>
-          <option>Проблемные</option>
-          <option>ОМС</option>
-        </styled-select>
-      </form-field>
-      <form-field
-          label="Лечащий врач"
-          class="field"
-      >
-        <styled-select
-            label="doctor"
-            v-model="form.doctor.value"
-            :value="form.doctor.value"
-            :invalid="v$.form.doctor.$invalid"
-            :form-blured="blured"
-            v-on:focused="(val) => onFocused('doctor')(val)"
+          <styled-select
+              label="clients"
+              multiple
+              required
+              v-model="form.clients.value"
+              :value="form.clients.value"
+              :invalid="v$.form.clients.$invalid"
+              :form-blured="blured"
+              v-on:focused="(val) => onFocused('clients')(val)"
+          >
+            <option>VIP</option>
+            <option>Проблемные</option>
+            <option>ОМС</option>
+          </styled-select>
+        </form-field>
+        <form-field
+            label="Лечащий врач"
+            class="field field__doctor"
         >
-          <option disabled selected>Выберите врача</option>
-          <option>Иванов</option>
-          <option>Захаров</option>
-          <option>Чернышева</option>
-        </styled-select>
-      </form-field>
+          <styled-select
+              label="doctor"
+              v-model="form.doctor.value"
+              :value="form.doctor.value"
+              :invalid="v$.form.doctor.$invalid"
+              :form-blured="blured"
+              v-on:focused="(val) => onFocused('doctor')(val)"
+          >
+            <option disabled selected>Выберите врача</option>
+            <option>Иванов</option>
+            <option>Захаров</option>
+            <option>Чернышева</option>
+          </styled-select>
+        </form-field>
+      </div>
     </form>
     <template v-slot:actions>
       <form-button
@@ -272,12 +286,33 @@ export default defineComponent({
 </template>
 
 <style scoped lang="scss">
-  .form__content__fcs {
+  .form__content {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+  }
+  .form__content__first {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(165px,1fr));
     grid-column-gap: 16px;
   }
+  .form__content__second {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(165px,1fr));
+    grid-column-gap: 16px;
+  }
+  .field__firstname {
+
+  }
+  .field__lastname {
+
+  }
   .field__patronymic {
-    grid-area: 2 / 1 / 3 / 3;
+  }
+  .field__phonenumber {
+  }
+  .field__sex {
+  }
+  .field__clients {
+  }
+  .field__doctor {
   }
 </style>

@@ -122,11 +122,11 @@ export default defineComponent({
     align-items: center;
   }
   .form__client-create {
-    width: 550px;
+    flex: 0 1 550px;
     border-radius: 16px;
   }
   .success__client-create {
-    width: 550px;
+    flex: 0 1 550px;
     border-radius: 16px;
   }
   .form__content {
