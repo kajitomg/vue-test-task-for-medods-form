@@ -1,5 +1,11 @@
 <script lang="ts">
-export default {
+import { defineComponent } from 'vue';
+
+export interface SelectEvent extends Event {
+  target: HTMLSelectElement;
+}
+
+export default defineComponent({
   name: 'styled-select',
   props: {
     label: {
@@ -8,20 +14,89 @@ export default {
     multiple: {
       type: Boolean,
     },
+    value: {
+      type: [String, Array],
+      default: '',
+    },
+    required: {
+      type: Boolean,
+    },
+    invalid: {
+      type: Boolean,
+      default: false,
+    },
+    formBlured: {
+      type: Boolean,
+      default: false,
+    },
+    fullWidth: {
+      type: Boolean,
+      default: false,
+    },
+    placeholder: {
+      type: [String, Number],
+    },
   },
-};
+  data() {
+    return {
+      focused: false,
+    };
+  },
+  methods: {
+    onChange(multiple:boolean) {
+      return (event: SelectEvent) => {
+        let value = [event.target.value];
+        if (multiple) {
+          value = [];
+          for (let i = 0; i < event.target.options.length; i += 1) {
+            if (event.target.options[i].selected) {
+              value.push(event.target.options[i].value);
+            }
+          }
+          return this.$emit('input', value);
+        }
+        return this.$emit('input', value[0]);
+      };
+    },
+
+    onFocus() {
+      this.$emit('focused', true);
+      this.focused = true;
+    },
+
+    onBlur() {
+      this.$emit('focused', false);
+      this.focused = false;
+    },
+  },
+});
 </script>
 
 <template>
   <label :for="label">
-    <select :id="label" :multiple="multiple" class="selector">
+    <select
+        @change="(e) => onChange(multiple)(e)"
+        :id="label"
+        :multiple="multiple"
+        :required="required"
+        class="styled-select"
+        @focus="onFocus"
+        @blur="onBlur"
+        :class='{
+          invalid,
+          filled:!!value && !!value.length,
+          formBlured,
+          fullWidth,
+          focused,
+        }'
+    >
       <slot></slot>
     </select>
   </label>
 </template>
 
 <style scoped lang="scss">
-  .selector {
+  .styled-select {
     position: relative;
 
     background: url("data:image/svg+xml,<svg height='10px' width='10px' viewBox='0 0 16 16' fill='%23000000' xmlns='http://www.w3.org/2000/svg'><path d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/></svg>") no-repeat;

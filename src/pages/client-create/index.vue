@@ -1,200 +1,116 @@
 <script lang="ts">
 
-import {
-  required,
-  numeric,
-  minLength,
-  maxLength,
-} from 'vuelidate/lib/validators';
-import { useVuelidate } from '@vuelidate/core';
-import TextField from '@/shared/ui/text-field/index.vue';
-import FormField from '@/shared/components/form-field/index.vue';
-import { helpers } from '@vuelidate/validators';
-import FormLayout from '@/shared/components/form-layout/index.vue';
+import ClientCreateFormMainInfo from '@/widgets/client-create-form-main-info/index.vue';
+import ClientCreateFormAddress from '@/widgets/client-create-form-address/index.vue';
+import ClientCreateFormDocument from '@/widgets/client-create-form-document/index.vue';
+import { defineComponent } from 'vue';
+import ClientCreateSuccess from '@/widgets/client-create-success/index.vue';
+import SpinnerLoader from '@/shared/ui/spinner-loader/index.vue';
 
-const phonenumberValidator = helpers.regex(/^[7]{1}[0-9]{3}[0-9]{3}[0-9]{2}[0-9]{2}$/);
-
-export default {
+export default defineComponent({
   name: 'client-create',
-  components: { FormLayout, FormField, TextField },
-  setup: () => ({ v$: useVuelidate() }),
+  components: {
+    SpinnerLoader,
+    ClientCreateSuccess,
+    ClientCreateFormDocument,
+    ClientCreateFormAddress,
+    ClientCreateFormMainInfo,
+  },
   data() {
     return {
-      form: {
-        firstname: {
-          value: '',
-          focused: false,
-        },
-        lastname: {
-          value: '',
-          focused: false,
-        },
-        patronymic: {
-          value: '',
-          focused: false,
-        },
-        phonenumber: {
-          value: '',
-          focused: false,
-        },
-      },
-      blured: false,
+      page: 1,
+      maxPage: 3,
+      formData: {},
+      formValidData: {} as Record<string, boolean>,
+      success: false,
+      clean: false,
+      loader: false,
     };
   },
-  computed: {
-    formValid() {
-      return (this as any).v$.form.$invalid;
+  watch: {
+    clean() {
+      if (this.clean) {
+        this.loader = true;
+        setTimeout(() => {
+          this.clean = false;
+          this.loader = false;
+        }, 200);
+      }
     },
-  },
-  validations() {
-    return {
-      form: {
-        firstname: {
-          value: {
-            required,
-            minLength: minLength(2),
-          },
-        },
-        lastname: {
-          value: {
-            required,
-            minLength: minLength(2),
-          },
-        },
-        patronymic: {
-          value: {
-            minLength: minLength(2),
-          },
-        },
-        phonenumber: {
-          value: {
-            required,
-            phonenumberValidator,
-          },
-        },
-      },
-    };
   },
   methods: {
     onSubmit() {
-      console.log('da');
+      if (this.formValid()) {
+        this.page = 0;
+        this.loader = true;
+        setTimeout(() => {
+          this.success = true;
+          this.loader = false;
+        }, 200);
+      }
     },
-    onFormButtonClick() {
-      (this as any).blured = true;
+    formValid():boolean {
+      return Object.values(this.formValidData).every((item) => item);
     },
-    onFocused(element) {
-      return (value) => {
-        (this as any).form[element].focused = value;
-      };
+    onVal(newVal, name) {
+      this.formValidData[name] = newVal;
+    },
+    onData(newVal) {
+      this.formData = { ...this.formData, ...newVal };
+    },
+    onNextPage() {
+      if (this.page === this.maxPage) return;
+      this.page += 1;
+    },
+    onPrevPage() {
+      if (this.page === 1) return;
+      this.page -= 1;
+    },
+    onCleanForm() {
+      this.page = 1;
+      this.success = false;
+      this.clean = true;
     },
   },
-};
+});
 </script>
 
 <template>
   <div class="layout">
-    <form-layout class="form" title="Создание клиента">
-      <form class="form__content" typeof="submit" :disabled="formValid" @submit.prevent="onSubmit">
-        <form-field label="Фамилия" class="field">
-          <text-field
-              v-model.trim="form.firstname.value"
-              placeholder="Иванов"
-              full-width
-              :invalid="v$.form.firstname.$invalid"
-              :form-blured="blured"
-              v-on:focused="(val) => onFocused('firstname')(val)"
-              required
-          ></text-field>
-        </form-field>
-        <form-field label="Имя" class="field">
-          <text-field
-              v-model.trim="form.lastname.value"
-              placeholder="Иван"
-              full-width
-              :invalid="v$.form.lastname.$invalid"
-              :form-blured="blured"
-              v-on:focused="(val) => onFocused('lastname')(val)"
-              required
-          ></text-field>
-        </form-field>
-        <form-field label="Отчество" class="field">
-          <text-field
-              v-model.trim="form.patronymic.value"
-              placeholder="Иванович"
-              :invalid="v$.form.patronymic.$invalid"
-              :form-blured="blured"
-              v-on:focused="(val) => onFocused('patronymic')(val)"
-              full-width
-          ></text-field>
-        </form-field>
-        <form-field
-            label="Номер телефона"
-            class="field"
-            :invalid="v$.form.phonenumber.$invalid"
-            :helper-text="
-          form.phonenumber.focused &&
-          v$.form.phonenumber.$invalid &&
-          form.phonenumber.value &&
-          blured ? 'Неверный формат номера' : ''
-        "
-        >
-          <text-field
-              v-model.trim="form.phonenumber.value"
-              placeholder="79999999999"
-              full-width
-              :invalid="v$.form.phonenumber.$invalid"
-              :form-blured="blured"
-              v-on:focused="(val) => onFocused('phonenumber')(val)"
-              required
-          ></text-field>
-        </form-field>
-        <form-field
-            label="Пол"
-            class="field"
-        >
-          <styled-select label="doctor">
-            <option>Выберите пол</option>
-            <option>Мужской</option>
-            <option>Женский</option>
-          </styled-select>
-        </form-field>
-        <form-field
-            label="Группа клиентов"
-            class="field"
-        >
-          <styled-select label="clients" multiple>
-            <option>VIP</option>
-            <option>Проблемные</option>
-            <option>ОМС</option>
-          </styled-select>
-        </form-field>
-        <form-field
-            label="Лечащий врач"
-            class="field"
-        >
-          <styled-select label="doctor">
-            <option>Выберите врача</option>
-            <option>Иванов</option>
-            <option>Захаров</option>
-            <option>Чернышева</option>
-          </styled-select>
-        </form-field>
-        <div>
-          <label for="sms">
-            <span>Не отправлять смс</span>
-            <input id="sms" type="checkbox"/>
-          </label>
-        </div>
-      </form>
-      <template v-slot:actions>
-        <form-button
-            class="form__button"
-            type="submit"
-            :class="{disabled:formValid}"
-            @click="onFormButtonClick"
-        >Далее</form-button>
-      </template>
-    </form-layout>
+    <client-create-form-main-info
+        class="form__client-create"
+        v-if="!clean"
+        v-show="page === 1 && !success"
+        v-on:isFormValid="onVal"
+        v-on:data="onData"
+        :on-next-page="onNextPage"
+        :on-prev-page="onPrevPage"
+    />
+    <client-create-form-address
+        class="form__client-create"
+        v-if="!clean"
+        v-show="page === 2 && !success"
+        v-on:isFormValid="onVal"
+        v-on:data="onData"
+        :on-next-page="onNextPage"
+        :on-prev-page="onPrevPage"
+    />
+    <client-create-form-document
+        class="form__client-create"
+        v-if="!clean"
+        v-show="page === 3 && !success"
+        v-on:isFormValid="onVal"
+        v-on:data="onData"
+        :on-submit="onSubmit"
+        :on-prev-page="onPrevPage"
+    />
+    <client-create-success
+        class="success__client-create"
+        v-if="!clean"
+        v-show="success"
+        :on-clean="onCleanForm"
+    />
+    <spinner-loader v-if="loader"/>
   </div>
 </template>
 
@@ -205,7 +121,11 @@ export default {
     justify-content: center;
     align-items: center;
   }
-  .form {
+  .form__client-create {
+    width: 550px;
+    border-radius: 16px;
+  }
+  .success__client-create {
     width: 550px;
     border-radius: 16px;
   }
@@ -213,7 +133,6 @@ export default {
     display: flex;
     flex-direction: column;
   }
-
   .field {
     flex: 1 0 auto;
     padding: 8px;

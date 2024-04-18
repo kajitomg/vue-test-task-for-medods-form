@@ -1,11 +1,13 @@
 <script lang="ts">
-export default {
+import { defineComponent } from 'vue';
+
+export default defineComponent({
   name: 'form-button',
-};
+});
 </script>
 
 <template>
-  <button class="form-button">
+  <button class="form-button" @click.prevent="$emit('click')">
     <slot></slot>
   </button>
 </template>

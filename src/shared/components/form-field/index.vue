@@ -1,6 +1,7 @@
 <script lang="ts">
+import { defineComponent } from 'vue';
 
-export default {
+export default defineComponent({
   name: 'form-field',
   props: {
     label: {
@@ -16,14 +17,16 @@ export default {
   },
   methods: {
     hasSlot(name:string) {
-      return !!(this as any).$slots[name];
+      return !!this.$slots[name];
     },
   },
-};
+});
 </script>
 
 <template>
-  <div class="form-field">
+  <div
+      class="form-field"
+  >
     <div
         v-if="!!label || hasSlot('label')"
         class="form-field__label"
@@ -50,8 +53,8 @@ export default {
 
 <style scoped lang="scss">
   .form-field {
-
     flex-direction: column;
+    margin: 8px 0;
   }
   .form-field__label {
     display: inline-block;

@@ -1,5 +1,7 @@
 <script lang="ts">
-export default {
+import { defineComponent } from 'vue';
+
+export default defineComponent({
   name: 'form-layout',
   props: {
     title: {
@@ -8,14 +10,14 @@ export default {
   },
   methods: {
     hasSlot(name:string) {
-      return !!(this as any).$slots[name];
+      return !!this.$slots[name];
     },
   },
-};
+});
 </script>
 
 <template>
-  <div class="form-layout">
+  <form class="form-layout">
     <div
         class="form-layout__title"
         v-if="hasSlot('title') || title"
@@ -40,14 +42,14 @@ export default {
           name="actions"
       ></slot>
     </div>
-  </div>
+  </form>
 </template>
 
 <style scoped lang="scss">
   .form-layout {
     padding: 16px;
 
-    background-color: whitesmoke;
+    background-color: rgba(245, 245, 245, 1);
   }
   .form-layout__title {
     margin: 16px 16px 32px;

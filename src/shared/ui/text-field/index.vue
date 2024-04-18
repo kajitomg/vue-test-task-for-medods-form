@@ -1,15 +1,24 @@
 <script lang="ts">
+import { defineComponent } from 'vue';
 
-interface InputEvent extends Event {
+export interface InputEvent extends Event {
   target: HTMLInputElement;
 }
 
-export default {
+export default defineComponent({
   name: 'text-field',
   props: {
+    label: {
+      type: String,
+      required: true,
+    },
     value: {
       type: [String, Number],
       default: '',
+    },
+    type: {
+      type: String,
+      default: 'text',
     },
     required: {
       type: Boolean,
@@ -38,39 +47,43 @@ export default {
   },
   methods: {
     onUpdate(event: InputEvent) {
-      (this as any).$emit('input', event.target.value);
+      this.$emit('input', event.target.value);
     },
 
     onFocus() {
-      (this as any).$emit('focused', true);
-      (this as any).focused = true;
+      this.$emit('focused', true);
+      this.focused = true;
     },
 
     onBlur() {
-      (this as any).$emit('focused', false);
-      (this as any).focused = false;
+      this.$emit('focused', false);
+      this.focused = false;
     },
   },
-};
+});
 </script>
 
 <template>
-  <input
-      @input="onUpdate"
-      @focus="onFocus"
-      @blur="onBlur"
-      :value="value"
-      class="text-field"
-      :placeholder="required ? placeholder + '*' : placeholder"
-      :required="required"
-      :class='{
-        invalid,
-        filled:!!value,
-        formBlured,
-        fullWidth,
-        focused,
-      }'
-  />
+  <label :for="label">
+    <input
+        :id="label"
+        @input="onUpdate"
+        @focus="onFocus"
+        @blur="onBlur"
+        :value="value"
+        :type="type"
+        class="text-field"
+        :placeholder="required ? placeholder + '*' : placeholder"
+        :required="required"
+        :class='{
+          invalid,
+          filled:!!value,
+          formBlured,
+          fullWidth,
+          focused,
+        }'
+    />
+  </label>
 </template>
 
 <style scoped lang="scss">
