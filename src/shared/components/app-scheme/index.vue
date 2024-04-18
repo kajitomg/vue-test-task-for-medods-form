@@ -1,8 +1,10 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
+import ContentContainer from '@/shared/ui/content-container/index.vue';
 
 export default defineComponent({
   name: 'app-scheme',
+  components: { ContentContainer },
 });
 </script>
 
