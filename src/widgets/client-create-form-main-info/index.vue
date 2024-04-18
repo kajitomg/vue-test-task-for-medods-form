@@ -125,9 +125,6 @@ export default defineComponent({
     };
   },
   methods: {
-    onSubmit() {
-      console.log('da');
-    },
     onFormButtonClick() {
       this.blured = true;
       if (this.formValid && this.onNextPage) this.onNextPage();
@@ -145,13 +142,21 @@ export default defineComponent({
 </script>
 
 <template>
-  <form-layout class="form" title="Создание клиента">
-    <form class="form__content" :disabled="!formValid" @submit.prevent="onSubmit">
+  <form-layout class="form" title="Создание клиента" :disabled="!formValid">
+    <div class="form__content">
       <div class="form__content__first">
         <div class="form__content__fc">
           <form-field
               label="Фамилия"
               class="field field__lastname"
+              :invalid="v$.form.lastname.$invalid"
+              :helper-text="
+                form.lastname.focused &&
+                v$.form.lastname.$invalid &&
+                blured ?
+                'Фамилия должна содержать только кириллицу и ' +
+                 'начинаться с заглавной буквы (Обязательное поле)' : ''
+              "
           >
             <text-field
                 label="firstname field__lastname"
@@ -167,6 +172,13 @@ export default defineComponent({
           <form-field
               label="Имя"
               class="field field__firstname"
+              :invalid="v$.form.firstname.$invalid"
+              :helper-text="
+                form.firstname.focused &&
+                v$.form.firstname.$invalid &&
+                blured ? 'Имя должно содержать только кириллицу и ' +
+                 'начинаться с заглавной буквы (Обязательное поле)' : ''
+              "
           >
             <text-field
                 label="firstname"
@@ -182,6 +194,13 @@ export default defineComponent({
           <form-field
               label="Отчество"
               class="field field__patronymic"
+              :invalid="v$.form.patronymic.$invalid"
+              :helper-text="
+                form.patronymic.focused &&
+                v$.form.patronymic.$invalid &&
+                blured ? 'Отчество должно содержать только кириллицу ' +
+                 'и начинаться с заглавной буквы' : ''
+              "
           >
             <text-field
                 label="patronymic"
@@ -199,14 +218,14 @@ export default defineComponent({
             class="field field__phonenumber"
             :invalid="v$.form.phonenumber.$invalid"
             :helper-text="
-          form.phonenumber.focused &&
-          v$.form.phonenumber.$invalid &&
-          form.phonenumber.value &&
-          blured ? 'Неверный формат номера' : ''
-        "
+              form.phonenumber.focused &&
+              v$.form.phonenumber.$invalid &&
+              blured ? 'Неверный формат номера' : ''
+            "
         >
           <text-field
               label="phonenumber"
+              type="number"
               v-model.trim="form.phonenumber.value"
               placeholder="79999999999"
               :invalid="v$.form.phonenumber.$invalid"
@@ -238,6 +257,12 @@ export default defineComponent({
         <form-field
             label="Группа клиентов"
             class="field field__clients"
+            :invalid="v$.form.clients.$invalid"
+            :helper-text="
+               form.clients.focused &&
+               v$.form.clients.$invalid &&
+               blured ? 'Обязательное поле' : ''
+            "
         >
           <styled-select
               label="clients"
@@ -273,7 +298,7 @@ export default defineComponent({
           </styled-select>
         </form-field>
       </div>
-    </form>
+    </div>
     <template v-slot:actions>
       <form-button
           class="form__button"
@@ -298,21 +323,5 @@ export default defineComponent({
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(165px,1fr));
     grid-column-gap: 16px;
-  }
-  .field__firstname {
-
-  }
-  .field__lastname {
-
-  }
-  .field__patronymic {
-  }
-  .field__phonenumber {
-  }
-  .field__sex {
-  }
-  .field__clients {
-  }
-  .field__doctor {
   }
 </style>

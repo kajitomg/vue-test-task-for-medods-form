@@ -8,8 +8,8 @@ import { useVuelidate } from '@vuelidate/core';
 import { minLength, required } from 'vuelidate/lib/validators';
 import { maxLength, helpers, numeric } from '@vuelidate/validators';
 
-const indexValidator = helpers.regex(/^[0-9]{6}$/);
 const firstButtonIsBig = helpers.regex(/^[А-ЯЁ][а-яё ]+$/);
+const numbersAll = helpers.regex(/^[0-9]+$/);
 
 export default defineComponent({
   name: 'client-create-form-address',
@@ -38,6 +38,8 @@ export default defineComponent({
           label: 'Индекс',
           placeholder: '103132',
           fullWidth: true,
+          required: false,
+          error: 'Поле должно состоять из 6 цифр',
         },
         country: {
           value: '',
@@ -46,6 +48,8 @@ export default defineComponent({
           label: 'Страна',
           placeholder: 'Россия',
           fullWidth: true,
+          required: false,
+          error: 'Поле должно начинаться с заглавной буквы и состоять из кириллицы',
         },
         state: {
           value: '',
@@ -54,6 +58,8 @@ export default defineComponent({
           label: 'Область',
           placeholder: 'Московская область',
           fullWidth: true,
+          required: false,
+          error: 'Поле должно начинаться с заглавной буквы и состоять из кириллицы',
         },
         city: {
           value: '',
@@ -62,6 +68,8 @@ export default defineComponent({
           label: 'Город',
           placeholder: 'Москва',
           fullWidth: true,
+          required: true,
+          error: 'Поле должно начинаться с заглавной буквы и состоять из кириллицы (Обязательное поле)',
         },
         street: {
           value: '',
@@ -70,6 +78,8 @@ export default defineComponent({
           label: 'Улица',
           placeholder: 'Манежная улица',
           fullWidth: true,
+          required: false,
+          error: 'Поле должно начинаться с заглавной буквы и состоять из кириллицы',
         },
         houseNumber: {
           value: '',
@@ -78,6 +88,8 @@ export default defineComponent({
           label: 'Номер дома',
           placeholder: '2',
           fullWidth: true,
+          required: false,
+          error: 'Поле должно включать только цифры',
         },
       },
       blured: false,
@@ -104,7 +116,7 @@ export default defineComponent({
           value: {
             maxLength: maxLength(6),
             minLength: minLength(6),
-            indexValidator,
+            numeric,
           },
         },
         country: {
@@ -131,15 +143,13 @@ export default defineComponent({
         houseNumber: {
           value: {
             numeric,
+            numbersAll,
           },
         },
       },
     };
   },
   methods: {
-    onSubmit() {
-      console.log('da');
-    },
     onBackButtonClick() {
       if (this.onPrevPage) this.onPrevPage();
     },
@@ -162,6 +172,12 @@ export default defineComponent({
           :label="item.label"
           class="field"
           :class="`field__${[item.name]}`"
+          :invalid="v$.form[item.name].$invalid"
+          :helper-text="
+               item.focused &&
+               v$.form[item.name].$invalid &&
+               blured ? item.error : ''
+          "
           v-for="item in form"
           :key="item.name"
       >
@@ -172,6 +188,7 @@ export default defineComponent({
             :full-width="item.fullWidth"
             :invalid="v$.form[item.name].$invalid"
             :form-blured="blured"
+            :required="item.required"
             v-on:focused="(val) => onFocused(item.name)(val)"
         />
       </form-field>

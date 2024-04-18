@@ -133,11 +133,21 @@ export default defineComponent({
 </script>
 
 <template>
-  <form-layout class="form" title="Создание клиента">
-    <form class="form__content" :disabled="!formValid">
+  <form-layout
+      class="form"
+      title="Создание клиента"
+      :disabled="!formValid"
+  >
+    <div class="form__content">
       <form-field
           label="Тип документа"
           class="field"
+          :invalid="v$.form.issue.$invalid"
+          :helper-text="
+               form.issue.focused &&
+               v$.form.issue.$invalid &&
+               blured ? 'Обязательное поле' : ''
+          "
       >
         <styled-select
             label="document-type"
@@ -158,6 +168,12 @@ export default defineComponent({
         <form-field
             label="Серия"
             class="field field__document-id"
+            :invalid="v$.form.series.$invalid"
+            :helper-text="
+               form.series.focused &&
+               v$.form.series.$invalid &&
+               blured ? 'Серия должна соответствовать формату 0222 или II-МЮ' : ''
+            "
         >
           <text-field
               label="series"
@@ -172,9 +188,16 @@ export default defineComponent({
         <form-field
             label="Номер"
             class="field field__document-id"
+            :invalid="v$.form.number.$invalid"
+            :helper-text="
+               form.number.focused &&
+               v$.form.number.$invalid &&
+               blured ? 'Номер должен состоять из 6 цифр' : ''
+            "
         >
           <text-field
               label="number"
+              type="number"
               v-model.trim="form.number.value"
               placeholder="357819"
               :invalid="v$.form.number.$invalid"
@@ -187,6 +210,12 @@ export default defineComponent({
       <form-field
           label="Кем выдан"
           class="field"
+          :invalid="v$.form.authority.$invalid"
+          :helper-text="
+               form.authority.focused &&
+               v$.form.authority.$invalid &&
+               blured ? 'Поле должно состоять из кириллицы' : ''
+          "
       >
         <text-field
             label="authority"
@@ -202,6 +231,12 @@ export default defineComponent({
       <form-field
           label="Дата выдачи"
           class="field"
+          :invalid="v$.form.date.$invalid"
+          :helper-text="
+               form.date.focused &&
+               v$.form.date.$invalid &&
+               blured ? 'Обязательное поле' : ''
+          "
       >
         <text-field
             label="date"
@@ -224,7 +259,7 @@ export default defineComponent({
             :form-blured="blured"
         />
       </div>
-    </form>
+    </div>
     <template v-slot:actions>
       <form-button
           class="form__button"

@@ -17,7 +17,9 @@ export default defineComponent({
 </script>
 
 <template>
-  <form class="form-layout">
+  <form
+      class="form-layout"
+  >
     <div
         class="form-layout__title"
         v-if="hasSlot('title') || title"
